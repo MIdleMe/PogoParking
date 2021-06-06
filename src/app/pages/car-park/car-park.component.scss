@@ -1,0 +1,82 @@
+.car-park-container {
+    background-image: linear-gradient(to right,#4c9efb, #2f5ffb);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.welcome-font-properties1 {
+    color: white;
+    margin-top: 5vh;
+    width: 30%;
+    font-size: 60px;
+    font-weight: 400;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-align: center;
+}
+
+.welcome-font-properties2 {
+    color: white;
+    margin-top: 2rem;
+    width: 219px;
+    height: 50px;
+    font-size: 20px;
+    font-weight: 600;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.25;
+    letter-spacing: normal;
+    text-align: left;
+}
+
+.car-park-content-container {
+    width: 100%;
+    height: 100%;
+    display:flex;
+    justify-content:
+    center;align-items:center;
+}
+
+.lot-tollbooth-container {
+    width: 85%;
+    display:flex;
+    justify-content: center;
+    align-items:center;
+    border: 2px solid #000000;
+    background-color: #e1eefc;
+    padding: 15px;
+}
+
+.lot-container {
+    width: 47vw;
+    height: 30vw;
+    background-image: url('../../../assets/images/parking-lot.png');
+    background-size: 100% 100%;
+}
+
+.tollbooth-container {
+    width: 35%;
+    height: 30vw;
+    margin-left: 3rem;
+    background-image: url('../../../assets/images/tollbooth.png');
+    background-size: 100% 100%;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tollbooth-container button{
+    width: 9rem;
+    height: 3rem;
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+    background: #b30202;
+    border: 1px solid #ffffff;
+    border-radius: 5px;
+}
