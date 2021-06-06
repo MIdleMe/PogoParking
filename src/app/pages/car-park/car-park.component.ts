@@ -13,6 +13,7 @@ export class CarParkComponent {
     title2 = 'Parking lot';
     subtitle1 = 'Welcome to your parking';
     subtitle2 = 'your parking app';
+    fare = 2; // 2€ per every STARTED hour
 
     private DEFAULT_WORKSPACE = 'banca';
     public activeAccess: boolean = false;
@@ -25,6 +26,15 @@ export class CarParkComponent {
     public getTicket(): void {
         this.parkingService.setTicket().then(ticket => {
             this.toastr.success('Ticket created', `#${ticket.position ? ticket.position + 1 : 0}: ${ticket.code}`);
+        }).catch(e => {
+            this.toastr.error('Cancelled', e);
+        });
+    }
+
+    public calculatePrice(code: string): void {
+        this.parkingService.getTicket(code).then(ticket => {
+            let price: number = (new Date(ticket.date || Date.now()).getHours() - new Date(Date.now()).getHours()) * this.fare;
+            this.toastr.warning(`Ticket code: ${ticket.code}`, `Total: ${price}€`);
         }).catch(e => {
             this.toastr.error('Cancelled', e);
         });
