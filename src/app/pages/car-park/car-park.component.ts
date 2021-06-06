@@ -25,16 +25,24 @@ export class CarParkComponent {
 
     public getTicket(): void {
         this.parkingService.setTicket().then(ticket => {
-            this.toastr.success('Ticket created', `#${ticket.position ? ticket.position + 1 : 0}: ${ticket.code}`);
+            this.toastr.success('Ticket created', `#${ticket.data.position ? ticket.data.position + 1 : 0}: ${ticket.code}`);
         }).catch(e => {
             this.toastr.error('Cancelled', e);
         });
     }
 
-    public calculatePrice(code: string): void {
-        this.parkingService.getTicket(code).then(ticket => {
-            let price: number = (new Date(ticket.date || Date.now()).getHours() - new Date(Date.now()).getHours()) * this.fare;
+    public calculatePrice(barcode: string): void {
+        this.parkingService.getTicket(barcode).then(ticket => {
+            let price: number = (new Date(ticket.data.date || Date.now()).getHours() - new Date(Date.now()).getHours()) * this.fare;
             this.toastr.warning(`Ticket code: ${ticket.code}`, `Total: ${price}€`);
+        }).catch(e => {
+            this.toastr.error('Cancelled', e);
+        });
+    }
+
+    public payTicket(barcode: string, paymentMethod: number) {
+        this.parkingService.editTicket(barcode, {paymentOption: paymentMethod, paymentDate: Date.now()}).then(ticket => {
+            this.toastr.info('Ticket paid', `#${ticket.data.position ? ticket.data.position + 1 : 'undefined'}: ${ticket.code}`);
         }).catch(e => {
             this.toastr.error('Cancelled', e);
         });
