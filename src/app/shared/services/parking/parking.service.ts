@@ -19,8 +19,8 @@ export class ParkingService {
     }
 
     public setTicket(): Promise<TicketModel> {
-        let key: string = <string><any> Date.now(),
-        value: string = crypto.getRandomValues(new Uint8Array(8)).join('').substr(0,16);
+        let value: string = <string><any> Date.now(),
+        key: string = crypto.getRandomValues(new Uint8Array(8)).join('').substr(0,16);
         return new Promise((resolve, reject) => {
             this.getTicketNumber().then(nTicket => {
                 if (nTicket < parkingSpaces) {
@@ -76,33 +76,6 @@ export class ParkingService {
         
     }
 
-    public getTicketList(): Promise<TicketModel[]> {
-
-        return new Promise((resolve, reject) => {
-            let ticketList: TicketModel[] = [];
-            localForage.iterate((value, key) => {
-                ticketList.push(<TicketModel>{date:key, code:value});
-            }).then(data => {
-                resolve(ticketList);
-            }).catch(e => {
-                reject(e);
-            });
-        });
-        
-    }
-
-    public getTicketDateList(): Promise<string[]> {
-
-        return new Promise((resolve, reject) => {
-            localForage.keys().then(data => {
-                resolve(data);
-            }).catch(e => {
-                reject(e);
-            });
-        });
-        
-    }
-
     public getTicketNumber(): Promise<number> {
 
         return new Promise((resolve, reject) => {
@@ -140,6 +113,33 @@ export class ParkingService {
                 }).catch(e => {
                     reject(e);
                 });
+            }).catch(e => {
+                reject(e);
+            });
+        });
+        
+    }
+
+    private getTicketList(): Promise<TicketModel[]> {
+
+        return new Promise((resolve, reject) => {
+            let ticketList: TicketModel[] = [];
+            localForage.iterate((value, key) => {
+                ticketList.push(<TicketModel>{date:key, code:value});
+            }).then(data => {
+                resolve(ticketList);
+            }).catch(e => {
+                reject(e);
+            });
+        });
+        
+    }
+
+    private getTicketCodeList(): Promise<string[]> {
+
+        return new Promise((resolve, reject) => {
+            localForage.keys().then(data => {
+                resolve(data);
             }).catch(e => {
                 reject(e);
             });

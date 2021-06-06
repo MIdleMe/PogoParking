@@ -22,7 +22,7 @@ export class CarParkComponent {
         private activatedRoute: ActivatedRoute, private toastr: ToastrService) {
     }
 
-    public emitTicket(): void {
+    public getTicket(): void {
         this.parkingService.setTicket().then(ticket => {
             this.toastr.success('Ticket created', `#${ticket.position ? ticket.position + 1 : 0}: ${ticket.code}`);
         }).catch(e => {
