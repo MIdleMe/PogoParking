@@ -19,7 +19,7 @@ export class ParkingService {
     }
 
     public setTicket(): Promise<TicketModel> {
-        let value: string = <string><any> Date.now(),
+        let value: number = Date.now(),
         key: string = crypto.getRandomValues(new Uint8Array(8)).join('').substr(0,16);
         return new Promise((resolve, reject) => {
             this.getTicketNumber().then(nTicket => {
@@ -48,7 +48,7 @@ export class ParkingService {
 
         return new Promise((resolve, reject) => {
             localForage.getItem(key).then(data => {
-                resolve(<TicketModel>{date:key, code:data});
+                resolve(<TicketModel>{date:data, code:key});
             }).catch(e => {
                 reject(e);
             });
@@ -125,7 +125,7 @@ export class ParkingService {
         return new Promise((resolve, reject) => {
             let ticketList: TicketModel[] = [];
             localForage.iterate((value, key) => {
-                ticketList.push(<TicketModel>{date:key, code:value});
+                ticketList.push(<TicketModel>{date:value, code:key});
             }).then(data => {
                 resolve(ticketList);
             }).catch(e => {
