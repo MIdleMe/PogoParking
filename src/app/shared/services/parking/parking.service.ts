@@ -3,6 +3,7 @@ import { TicketModel, TicketDataModel } from './parking.model';
 import * as localForage from "localforage";
 
 const parkingSpaces: number = 54;
+const maxMinDelay: number = 15;
 
 @Injectable()
 export class ParkingService {
@@ -65,13 +66,13 @@ export class ParkingService {
         
     }
 
-    public getTicket(key: string): Promise<TicketModel> {
+    public getTicket(barcode: string): Promise<TicketModel> {
 
         return new Promise((resolve, reject) => {
-            localForage.getItem(key).then(data => {
+            localForage.getItem(barcode).then(data => {
                 if (!data)
                     throw new Error('No data found');
-                resolve(<TicketModel>{data:data, code:key});
+                resolve(<TicketModel>{data:data, code:barcode});
             }).catch(e => {
                 reject('The ticket number was not recogniced');
             });
@@ -153,6 +154,21 @@ export class ParkingService {
                 reject(e);
             });
         });
+    }
+
+    public getTicketState(barcode: string): Promise<number> {
+
+        return new Promise((resolve, reject) => {
+            this.getTicket(barcode).then(ticket => {
+                resolve(ticket.data.paymentDate 
+                && Math.trunc((Date.now() - ticket.data.paymentDate)/(6*10**4)) <= maxMinDelay ? 
+                    1
+                : 0);
+            }).catch(e => {
+                reject(e);
+            });
+        });
+
     }
 
     private getTicketList(): Promise<TicketModel[]> {
