@@ -28,6 +28,7 @@ export class CarParkComponent {
     constructor(private router: Router, private parkingService: ParkingService, 
         private activatedRoute: ActivatedRoute, private toastr: ToastrService, 
         private dialog: MatDialog) {
+            this.calculateFreeSpaces();
     }
 
     public getTicket(): void {

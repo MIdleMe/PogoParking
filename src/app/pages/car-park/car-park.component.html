@@ -6,7 +6,12 @@
         {{subtitle1}}<br>{{subtitle2}}
     </h1>
     <div class="car-park-content-container">
-        <button class="btn-lots" (click)="getFreeSpaces()">Available spaces</button>
+        <div class="counter-lots-container">
+            <div class="counter-container">
+                {{availableLots}}
+            </div>
+            <button class="btn-lots" (click)="getFreeSpaces()">Available spaces</button>
+        </div>
         <div class="lot-tollbooth-container">
             <div class="lot-container">
             </div>
