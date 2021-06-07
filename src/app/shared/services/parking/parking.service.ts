@@ -22,15 +22,19 @@ export class ParkingService {
         let value: TicketDataModel = {date: Date.now()},
         key: string = crypto.getRandomValues(new Uint8Array(8)).join('').substr(0,16);
         return new Promise((resolve, reject) => {
-            this.getTicketNumber().then(nTicket => {
-                if (nTicket < parkingSpaces) {
-                    localForage.setItem(key, value).then(() => {
-                        this.getTicket(key).then(data => {
-                            data.data['position'] = nTicket;
-                            resolve(<TicketModel>data);
-                        }).catch(e => {
-                            reject(e);
-                        });
+            this.getParkedNumber().then(nParked => {
+                if (nParked < parkingSpaces) {
+                    this.getTicketNumber().then(nTicket => {
+                            value['position'] = nTicket;
+                            localForage.setItem(key, value).then(() => {
+                                this.getTicket(key).then(data => {
+                                    resolve(<TicketModel>data);
+                                }).catch(e => {
+                                    reject(e);
+                                });
+                            }).catch(e => {
+                                reject(e);
+                            });
                     }).catch(e => {
                         reject(e);
                     });
@@ -47,9 +51,10 @@ export class ParkingService {
     public editTicket(key: string, value: TicketDataModel): Promise<TicketModel> {
         return new Promise((resolve, reject) => {
             this.getTicket(key).then(data => {
-                let modifiedData: TicketDataModel = {...data,...value};
+                let modifiedData: TicketDataModel = data.data;
+                modifiedData = {...modifiedData,...value}
                 localForage.setItem(key, modifiedData).then(() => {
-                    resolve(<TicketModel>modifiedData);
+                    resolve(<TicketModel>{code: key, data: modifiedData});
                 }).catch(e => {
                     reject(e);
                 });
@@ -64,9 +69,11 @@ export class ParkingService {
 
         return new Promise((resolve, reject) => {
             localForage.getItem(key).then(data => {
+                if (!data)
+                    throw new Error('No data found');
                 resolve(<TicketModel>{data:data, code:key});
             }).catch(e => {
-                reject(e);
+                reject('The ticket number was not recogniced');
             });
         });
         
@@ -134,6 +141,18 @@ export class ParkingService {
             });
         });
         
+    }
+
+    public getParkedNumber(): Promise<number> {
+
+        return new Promise((resolve, reject) => {
+            let ticketList: TicketModel[] = [];
+            this.getTicketList().then(dataticketList => {
+                resolve(dataticketList.filter(ticket => !ticket.data.paymentDate).length);
+            }).catch(e => {
+                reject(e);
+            });
+        });
     }
 
     private getTicketList(): Promise<TicketModel[]> {

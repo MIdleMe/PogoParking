@@ -1,0 +1,23 @@
+<h1 mat-dialog-title>Select payment method</h1>
+<div mat-dialog-content>
+  <p>Charge: {{data.payment}}</p>
+  <mat-label width="100%">Method</mat-label>
+  <mat-radio-group
+    aria-labelledby="payment-method"
+    [(ngModel)]="data.paymentMethod" [value]="data.paymentMethod">
+      <mat-radio-button id="visa" 
+        [value]="1" >visa</mat-radio-button>
+      <label class="drinkcard-cc visa" for="visa"></label>
+      <mat-radio-button id="mastercard" 
+        [value]="2">mastercard</mat-radio-button>
+      <label class="drinkcard-cc mastercard"for="mastercard"></label>
+      <mat-radio-button id="cash" 
+        [value]="3">cash</mat-radio-button>
+      <label class="drinkcard-cc cash"for="cash"></label>
+  </mat-radio-group>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()" class="btn-cancel">Cancel</button>
+  <button mat-button [mat-dialog-close]="data.paymentMethod" [disabled]="!data.paymentMethod" 
+    cdkFocusInitial class="btn-ok">Continue</button>
+</div>

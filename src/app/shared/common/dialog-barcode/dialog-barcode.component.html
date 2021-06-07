@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>Hi </h1>
+<div mat-dialog-content>
+  <p>Please introduce your ticket number in order to proccess the exit</p>
+  <mat-form-field>
+    <mat-label>Ticket number</mat-label>
+    <input matInput [(ngModel)]="data.barcode">
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()" class="btn-cancel">No Thanks</button>
+  <button mat-button [mat-dialog-close]="data.barcode" cdkFocusInitial class="btn-ok">Ok</button>
+</div>
