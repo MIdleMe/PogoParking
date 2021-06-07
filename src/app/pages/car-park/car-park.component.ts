@@ -68,14 +68,19 @@ export class CarParkComponent {
     public calculatePrice(barcode: string): Promise<string> {
 
         return new Promise((resolve, reject) => {
-            this.parkingService.getTicket(barcode).then(ticket => {
-                if (!!ticket.data.paymentDate)
+            this.parkingService.getTicketState(barcode).then(state => {
+                if (state)
                     throw new Error('Ticket already payed');
-                let price: number = ticket.data.date ? 
-                    Math.trunc((Date.now() - ticket.data.date)/(3.6*10**6))  * this.fare 
-                : 0;
-                this.toastr.warning(`Ticket code: ${ticket.code}`, `Total: ${price}€`);
-                resolve(price+'€');
+                this.parkingService.getTicket(barcode).then(ticket => {
+                    let price: number = ticket.data.date ? 
+                        Math.trunc((Date.now() - ticket.data.date)/(3.6*10**6))  * this.fare 
+                    : 0;
+                    this.toastr.warning(`Ticket code: ${ticket.code}`, `Total: ${price}€`);
+                    resolve(price+'€');
+                }).catch(e => {
+                    reject(e);
+                    this.toastr.error('Cancelled', e);
+                });
             }).catch(e => {
                 reject(e);
                 this.toastr.error('Cancelled', e);
@@ -86,13 +91,42 @@ export class CarParkComponent {
 
     public payTicket(barcode: string, paymentMethod: number) {
 
-        this.parkingService.editTicket(barcode, {paymentOption: paymentMethod, paymentDate: Date.now()}).then(ticket => {
-            console.log(ticket);
+        let now: number = Date.now();
+        this.parkingService.editTicket(barcode, {date: now, paymentOption: paymentMethod, paymentDate: now}).then(ticket => {
             this.toastr.info('Ticket paid', `#${ticket.data.position !== null && ticket.data.position !== undefined ? 
                 ticket.data.position + 1 : 'undefined'}: ${ticket.code}`);
             this.currentBarcode = '';
         }).catch(e => {
             this.toastr.error('Cancelled', e);
+        });
+
+    }
+
+    public getTicketState(barcode: string): void {
+
+        this.parkingService.getTicketState(barcode).then(state => {
+            console.log(state);
+            if (state) {
+                this.toastr.success('Exit opened', 'Thank you');
+            } else {
+                this.toastr.error('Exit closed', 'Please, proccede to renew your payment');
+            }
+        }).catch(e => {
+            this.toastr.error('Exit closed', e);
+        });
+
+    }
+
+    public openGateDialog(): void {
+
+        let dialogRef = this.dialog.open(DialogBarcodeComponent, {
+            data: {barcode: this.currentBarcode}
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            this.currentBarcode = result;
+            if (this.currentBarcode) {
+                this.getTicketState(result);
+            }
         });
 
     }
