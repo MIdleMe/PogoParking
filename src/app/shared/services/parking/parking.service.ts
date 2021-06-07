@@ -149,21 +149,38 @@ export class ParkingService {
         return new Promise((resolve, reject) => {
             let ticketList: TicketModel[] = [];
             this.getTicketList().then(dataticketList => {
-                resolve(dataticketList.filter(ticket => !ticket.data.paymentDate).length);
+                resolve(dataticketList.filter(ticket => !ticket.data.hasExited).length);
             }).catch(e => {
                 reject(e);
             });
         });
     }
 
+    public getParkingSpaces(): Promise<number> {
+
+        return new Promise((resolve) => {
+            resolve(parkingSpaces);
+        });
+
+    }
+
     public getTicketState(barcode: string): Promise<number> {
 
         return new Promise((resolve, reject) => {
             this.getTicket(barcode).then(ticket => {
-                resolve(ticket.data.paymentDate 
-                && Math.trunc((Date.now() - ticket.data.paymentDate)/(6*10**4)) <= maxMinDelay ? 
-                    1
-                : 0);
+                let response = 0;
+                switch (true) {
+                    case ticket.data.hasExited: 
+                        response = 2;
+                        break;
+                    case ticket.data.paymentDate 
+                        && Math.trunc((Date.now() - ticket.data.paymentDate)/(6*10**4)) > maxMinDelay:
+                        response = 1;
+                        break;
+                    default:
+                        response = 0;
+                }
+                resolve(response);
             }).catch(e => {
                 reject(e);
             });

@@ -34,6 +34,18 @@
     text-align: left;
 }
 
+.btn-lots{
+    width: 9rem;
+    height: 3rem;
+    margin: 0px 10px 0px 10px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+    background: #690ae4;
+    border: 1px solid #ffffff;
+    border-radius: 5px;
+}
+
 .car-park-content-container {
     width: 100%;
     height: 100%;
@@ -45,6 +57,7 @@
 
 .lot-tollbooth-container {
     width: 85%;
+    margin-top: 10px;
     display: flex;
     justify-content: center;
     align-items: center;

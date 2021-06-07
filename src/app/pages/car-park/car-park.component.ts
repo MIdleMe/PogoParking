@@ -18,6 +18,7 @@ export class CarParkComponent {
     subtitle2: any = 'your parking app';
     fare: number = 2; // 2€ per every STARTED hour
     currentBarcode: string = '';
+    availableLots: number = 0;
 
 
     private DEFAULT_WORKSPACE = 'banca';
@@ -37,6 +38,7 @@ export class CarParkComponent {
             {
                 timeOut: 10000
             });
+            this.calculateFreeSpaces();
         }).catch(e => {
             this.toastr.error('Cancelled', e);
         });
@@ -102,14 +104,24 @@ export class CarParkComponent {
 
     }
 
-    public getTicketState(barcode: string): void {
+    public openGate(barcode: string): void {
 
         this.parkingService.getTicketState(barcode).then(state => {
             console.log(state);
-            if (state) {
-                this.toastr.success('Exit opened', 'Thank you');
-            } else {
-                this.toastr.error('Exit closed', 'Please, proccede to renew your payment');
+            switch (state) {
+                case 1:
+                    this.parkingService.editTicket(barcode, {hasExited: true}).then(ticket => {
+                        this.toastr.success('Exit opened', 'Thank you');
+                        this.calculateFreeSpaces();
+                    }).catch(e => {
+                        this.toastr.error('Cancelled', e);
+                    });
+                    break;
+                case 2:
+                    this.toastr.error('Exit closed', 'this ticket has already been used');
+                    break;
+                default:
+                    this.toastr.error('Exit closed', 'Please, proccede to renew your payment');
             }
         }).catch(e => {
             this.toastr.error('Exit closed', e);
@@ -125,8 +137,37 @@ export class CarParkComponent {
         dialogRef.afterClosed().subscribe(result => {
             this.currentBarcode = result;
             if (this.currentBarcode) {
-                this.getTicketState(result);
+                this.openGate(result);
             }
+        });
+
+    }
+
+    public calculateFreeSpaces(): Promise<number> {
+
+        return new Promise((resolve, reject) => {
+            Promise.all([this.parkingService.getParkedNumber(), 
+                this.parkingService.getParkingSpaces()]).then(responses => {
+                    console.log(responses);
+                    this.availableLots = responses[1] - responses[0];
+                    resolve(this.availableLots);
+                }).catch(e => {
+                    reject(e);
+                });
+        });
+
+    }
+
+    public getFreeSpaces(): void {
+
+        this.calculateFreeSpaces().then(lots => {
+            if (lots) {
+                this.toastr.success('Available spaces', `There are ${lots} available spaces`);
+            } else {
+                this.toastr.error('No available spaces', 'There are 0 available spaces');
+            }
+        }).catch(e => {
+            this.toastr.error('Exit closed', e);
         });
 
     }

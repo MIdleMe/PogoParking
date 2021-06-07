@@ -8,5 +8,6 @@ export class TicketDataModel {
     public position?: number;
     public paymentDate?: number;
     public paymentOption?: number;
+    public hasExited?: boolean = false;
 }
 
