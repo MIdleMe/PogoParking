@@ -43,9 +43,9 @@
     background-image:url('../../../../assets/images/cash.png');
 }
 
-.cc-selector input:active +.drinkcard-cc{opacity: .9;}
+.cc-selector .mat-radio-checked +.drinkcard-cc{opacity: .9;}
 
-.cc-selector input:checked +.drinkcard-cc{
+.cc-selector .mat-radio-checked +.drinkcard-cc{
     -webkit-filter: none;
        -moz-filter: none;
             filter: none;

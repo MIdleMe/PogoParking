@@ -13,10 +13,8 @@ import { DialogPaymentMethodComponent } from '../../shared/common/dialog-payment
 })
 export class CarParkComponent {
     title1: any = 'Parking lot';
-    title2: any = 'Parking lot';
-    subtitle1: any = 'Welcome to your parking';
+    subtitle1: any = 'Welcome to ';
     subtitle2: any = 'your parking app';
-    fare: number = 2; // 2€ per every STARTED hour
     currentBarcode: string = '';
     availableLots: number = 0;
 
@@ -72,18 +70,22 @@ export class CarParkComponent {
 
         return new Promise((resolve, reject) => {
             this.parkingService.getTicketState(barcode).then(state => {
-                if (state)
-                    throw new Error('Ticket already payed');
-                this.parkingService.getTicket(barcode).then(ticket => {
-                    let price: number = ticket.data.date ? 
-                        Math.trunc((Date.now() - ticket.data.date)/(3.6*10**6))  * this.fare 
-                    : 0;
-                    this.toastr.warning(`Ticket code: ${ticket.code}`, `Total: ${price}€`);
-                    resolve(price+'€');
-                }).catch(e => {
-                    reject(e);
-                    this.toastr.error('Cancelled', e);
-                });
+                if (state) {
+                    this.toastr.error('Cancelled', 'Ticket already payed');
+                } else {
+                    this.parkingService.getTicket(barcode).then(ticket => {
+                        this.parkingService.getTicketFare(ticket).then(fare => {
+                            this.toastr.warning(`Ticket code: ${ticket.code}`, `Total: ${fare.ammount}${fare.currency}`);
+                            resolve(fare.ammount+fare.currency);
+                        }).catch(e => {
+                            reject(e);
+                            this.toastr.error('Cancelled', e);
+                        });
+                    }).catch(e => {
+                        reject(e);
+                        this.toastr.error('Cancelled', e);
+                    });
+                }
             }).catch(e => {
                 reject(e);
                 this.toastr.error('Cancelled', e);
@@ -105,10 +107,29 @@ export class CarParkComponent {
 
     }
 
+    public getTicketState(barcode: string): Promise<number> {
+        return new Promise((resolve, reject) => {
+            this.parkingService.getTicketState(barcode).then(state => {
+                switch (state) {
+                    case 1:
+                        this.toastr.info('Ticket State', 'Paid');
+                        break;
+                    case 2:
+                        this.toastr.info('Ticket State', 'Unpaid');
+                        break;
+                    default:
+                        this.toastr.info('Ticket State', 'Unpaid');
+                }
+                resolve(state);
+            }).catch(e => {
+                reject(e);
+            });
+        });
+    } 
+
     public openGate(barcode: string): void {
 
         this.parkingService.getTicketState(barcode).then(state => {
-            console.log(state);
             switch (state) {
                 case 1:
                     this.parkingService.editTicket(barcode, {hasExited: true}).then(ticket => {
@@ -149,7 +170,6 @@ export class CarParkComponent {
         return new Promise((resolve, reject) => {
             Promise.all([this.parkingService.getParkedNumber(), 
                 this.parkingService.getParkingSpaces()]).then(responses => {
-                    console.log(responses);
                     this.availableLots = responses[1] - responses[0];
                     resolve(this.availableLots);
                 }).catch(e => {
