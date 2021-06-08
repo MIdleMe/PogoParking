@@ -71,9 +71,11 @@ export class ParkingService {
 
         return new Promise((resolve, reject) => {
             localForage.getItem(barcode).then(data => {
-                if (!data)
-                    throw new Error('No data found');
-                resolve(<TicketModel>{data:data, code:barcode});
+                if (data) {
+                    resolve(<TicketModel>{data:data, code:barcode});
+                } else {
+                    reject('No data found');
+                }
             }).catch(e => {
                 reject('The ticket number was not recogniced');
             });

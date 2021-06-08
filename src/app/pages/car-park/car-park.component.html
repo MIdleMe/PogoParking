@@ -7,21 +7,20 @@
     </h1>
     <div class="car-park-content-container">
         <div class="counter-lots-container">
-            <div [class]="availableLots > 35 ? 'counter-many-container' : availableLots > 15 ? 'counter-some-container' : 'counter-few-container'">
-                {{availableLots}}
+            <div [class]="(numberOfLots - occupiedLots) > 35 ? 'counter-many-container' : (numberOfLots - occupiedLots) > 15 ? 'counter-some-container' : 'counter-few-container'">
+                {{numberOfLots - occupiedLots}}
             </div>
-            <button class="btn-lots" (click)="getFreeSpaces()">Available spaces</button>
+            <button mat-button class="btn-lots" (click)="getFreeSpaces()">Available spaces</button>
         </div>
         <div class="lot-tollbooth-container">
-            <div class="lot-container">
-            </div>
+            <parking-lot [numberOfLots]="numberOfLots" [occupiedLots]="occupiedLots"></parking-lot>
             <div class="tollbooth-container">
-                <button [disabled]="availableLots === 0" (click)="getTicket()">Ticket</button>
+                <button mat-button class="btn-tollbooth" [disabled]="numberOfLots - occupiedLots === 0" (click)="getTicket()">Ticket</button>
             </div>
         </div>
         <div class="payment-gate-container">
-            <button class="btn-payment" (click)="openPaymentDialog()">Payment</button>
-            <button class="btn-gate" (click)="openGateDialog()">Open gate</button>
+            <button mat-button class="btn-payment" (click)="openPaymentDialog()">Payment</button>
+            <button mat-button class="btn-gate" (click)="openGateDialog()">Open gate</button>
         </div>
     </div>
 </div>
