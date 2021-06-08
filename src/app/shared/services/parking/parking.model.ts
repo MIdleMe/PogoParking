@@ -11,3 +11,8 @@ export class TicketDataModel {
     public hasExited?: boolean = false;
 }
 
+export class FareModel {
+    public ammount: number = 0;
+    public currency: string = '';
+}
+

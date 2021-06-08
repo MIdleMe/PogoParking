@@ -7,7 +7,7 @@
     </h1>
     <div class="car-park-content-container">
         <div class="counter-lots-container">
-            <div class="counter-container">
+            <div [class]="availableLots > 35 ? 'counter-many-container' : availableLots > 15 ? 'counter-some-container' : 'counter-few-container'">
                 {{availableLots}}
             </div>
             <button class="btn-lots" (click)="getFreeSpaces()">Available spaces</button>
@@ -16,7 +16,7 @@
             <div class="lot-container">
             </div>
             <div class="tollbooth-container">
-                <button (click)="getTicket()">Ticket</button>
+                <button [disabled]="availableLots === 0" (click)="getTicket()">Ticket</button>
             </div>
         </div>
         <div class="payment-gate-container">

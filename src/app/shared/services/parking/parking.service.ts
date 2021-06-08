@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { TicketModel, TicketDataModel } from './parking.model';
+import { TicketModel, TicketDataModel, FareModel } from './parking.model';
 import * as localForage from "localforage";
 
 const parkingSpaces: number = 54;
 const maxMinDelay: number = 15;
+const fare: number = 2; // 2€ per every STARTED hour
 
 @Injectable()
 export class ParkingService {
@@ -100,6 +101,17 @@ export class ParkingService {
         
     }
 
+    public getTicketFare(ticket: TicketModel): Promise<FareModel> {
+
+        return new Promise((resolve, reject) => {
+            let price: number = ticket.data.date ? 
+                Math.trunc((Date.now() - ticket.data.date)/(3.6*10**6))  * fare
+            : 0;
+            resolve(<FareModel>{ammount: price, currency: '€'});
+        });
+
+    }
+
     public getTicketNumber(): Promise<number> {
 
         return new Promise((resolve, reject) => {
@@ -174,7 +186,7 @@ export class ParkingService {
                         response = 2;
                         break;
                     case ticket.data.paymentDate 
-                        && Math.trunc((Date.now() - ticket.data.paymentDate)/(6*10**4)) > maxMinDelay:
+                        && Math.trunc((Date.now() - ticket.data.paymentDate)/(6*10**4)) <= maxMinDelay:
                         response = 1;
                         break;
                     default:
