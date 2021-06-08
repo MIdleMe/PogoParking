@@ -1,0 +1,18 @@
+
+.lot-container {
+    width: 47vw;
+    max-width: 788.188px;
+    height: 30vw;
+    max-height: 503.094px;
+    background-image: url('../../../../assets/images/parking-lot.png');
+    background-size: 100% 100%;
+    display: -webkit-box;
+}
+
+.car {
+    width: 5%;
+    height: 25%;
+    position: relative;
+    background-size: 100% 100%;
+    background-image: url('../../../../assets/images/car.png');
+}

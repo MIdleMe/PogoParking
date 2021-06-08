@@ -5,7 +5,7 @@ import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
-import { MatButtonModule } from '@angular/material/button';
+import { CarParkModule } from './pages/car-park/car-park.component.module';
 
 @NgModule({
   declarations: [
@@ -19,8 +19,9 @@ import { MatButtonModule } from '@angular/material/button';
     ToastrModule.forRoot({
       positionClass :'toast-bottom-right'
     }),
-    MatButtonModule
+    CarParkModule
   ],
+  exports: [],
   providers: [],
   bootstrap: [AppComponent]
 })

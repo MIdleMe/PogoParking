@@ -1,22 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ParkingService } from '../../shared/services/parking/parking.service';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogBarcodeComponent } from '../../shared/common/dialog-barcode/dialog-barcode.component';
-import { DialogPaymentMethodComponent } from '../../shared/common/dialog-payment-method/dialog-payment-method.component';
+import { DialogBarcodeComponent } from '../../shared/components/dialog-barcode/dialog-barcode.component';
+import { DialogPaymentMethodComponent } from '../../shared/components/dialog-payment-method/dialog-payment-method.component';
 
 @Component({
     selector: 'car-park',
     templateUrl: './car-park.component.html',
     styleUrls: ['./car-park.component.scss']
 })
-export class CarParkComponent {
+export class CarParkComponent  implements OnInit {
     title1: any = 'Parking lot';
     subtitle1: any = 'Welcome to ';
     subtitle2: any = 'your parking app';
     currentBarcode: string = '';
-    availableLots: number = 0;
+    numberOfLots: number = 0;
+    occupiedLots: number = 0;
 
 
     private DEFAULT_WORKSPACE = 'banca';
@@ -26,7 +27,10 @@ export class CarParkComponent {
     constructor(private router: Router, private parkingService: ParkingService, 
         private activatedRoute: ActivatedRoute, private toastr: ToastrService, 
         private dialog: MatDialog) {
-            this.calculateFreeSpaces();
+    }
+
+    ngOnInit() {
+        this.calculateFreeSpaces();
     }
 
     public getTicket(): void {
@@ -170,8 +174,9 @@ export class CarParkComponent {
         return new Promise((resolve, reject) => {
             Promise.all([this.parkingService.getParkedNumber(), 
                 this.parkingService.getParkingSpaces()]).then(responses => {
-                    this.availableLots = responses[1] - responses[0];
-                    resolve(this.availableLots);
+                    this.occupiedLots = responses[0];
+                    this.numberOfLots = responses[1];
+                    resolve(this.numberOfLots - this.occupiedLots);
                 }).catch(e => {
                     reject(e);
                 });

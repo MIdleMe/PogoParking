@@ -6,6 +6,8 @@ import { DialogBarcodeComponent } from './dialog-barcode/dialog-barcode.componen
 import { FormsModule } from '@angular/forms';
 import { DialogPaymentMethodComponent } from './dialog-payment-method/dialog-payment-method.component';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatButtonModule } from '@angular/material/button';
+import { ParkingLotModule } from './parking-lot/parking-lot.component.module';
 
 @NgModule({
     imports: [
@@ -13,9 +15,13 @@ import { MatRadioModule } from '@angular/material/radio';
         MatFormFieldModule,
         MatInputModule,
         FormsModule,
-        MatRadioModule
+        MatRadioModule,
+        MatButtonModule,
+        ParkingLotModule
     ],
-    exports: [],
+    exports: [
+        ParkingLotModule
+    ],
     declarations: [
         DialogBarcodeComponent,
         DialogPaymentMethodComponent
@@ -26,4 +32,4 @@ import { MatRadioModule } from '@angular/material/radio';
     ],
     providers: []
 })
-export class CommonModule { }
+export class ComponentsModule { }
