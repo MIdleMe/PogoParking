@@ -98,7 +98,7 @@ export class CarParkComponent  implements OnInit {
         
     }
 
-    public payTicket(barcode: string, paymentMethod: number) {
+    public payTicket(barcode: string, paymentMethod: number): void {
 
         let now: number = Date.now();
         this.parkingService.editTicket(barcode, {date: now, paymentOption: paymentMethod, paymentDate: now}).then(ticket => {
