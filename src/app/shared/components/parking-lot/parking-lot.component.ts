@@ -17,7 +17,7 @@ export class ParkingLotComponent {
         return new Array(occupied);
     }
 
-    public hueTransform(): SafeStyle {
-        return this._sanitizer.bypassSecurityTrustStyle(`hue-rotate(${Math.random()*360}deg)`);
+    public hueTransform(position: number): SafeStyle {
+        return this._sanitizer.bypassSecurityTrustStyle(`hue-rotate(${((parseInt(Math.PI.toFixed(20).toString().replace(',','')[position%20])%3)*120)-(position%3*120)}deg)`);
     }
 }
