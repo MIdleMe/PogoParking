@@ -142,7 +142,7 @@ export class ParkingService {
         
     }
 
-    public clearAll(key: string): Promise<any> {
+    public clearAll(): Promise<any> {
 
         return new Promise((resolve, reject) => {
             localForage.clear().then(() => {

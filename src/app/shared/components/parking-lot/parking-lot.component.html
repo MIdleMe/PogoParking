@@ -1,6 +1,6 @@
 <div class="lot-container">
     <div class="car" *ngFor="let loop3 of counter(occupiedLots) ;let i= index" 
-        [style.filter]="hueTransform()" 
+        [style.filter]="hueTransform(i)" 
         [style.left]="(i+1) > 38 ? 
             (1.2*(i+1))-235+'%' 
         : (i+1) > 27 ? 
