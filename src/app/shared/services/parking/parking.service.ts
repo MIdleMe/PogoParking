@@ -147,7 +147,7 @@ export class ParkingService {
 
         return new Promise((resolve, reject) => {
             let price: number = ticket.data.date ? 
-                Math.trunc((Date.now() - ticket.data.date)/(3.6*10**6))  * fare // Full hours since ticket creation times fare per hour
+                Math.ceil((Date.now() - ticket.data.date)/(3.6*10**6))  * fare // Full hours since ticket creation times fare per hour
             : 0;
             resolve(<FareModel>{ammount: price, currency: '€'});
         });
@@ -272,8 +272,8 @@ export class ParkingService {
                     case ticket.data.hasExited: // Ticket registered as exited
                         response = 2;
                         break;
-                    case ticket.data.paymentDate // Ticket payed and payment not expired (15min)
-                        && Math.trunc((Date.now() - ticket.data.paymentDate)/(6*10**4)) <= maxMinDelay:
+                    case ticket.data.paymentDate // Ticket payed and payment not expired. Calculates the number of minutes passed since last payed hour. Must be less than max minutes from payment (15min).
+                        && (Date.now() - (ticket.data.paymentDate+((3.6*10**6)-ticket.data.paymentDate%(3.6*10**6))))/(6*10**4) <= maxMinDelay:
                         response = 1;
                         break;
                     default:
